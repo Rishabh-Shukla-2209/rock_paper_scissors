@@ -1,32 +1,37 @@
-function getComputerChoice(){
-    let randomNumber = Math.floor(Math.random()*4);
+async function getComputerChoice() {
+    return new Promise((resolve) => {
+      let computerChoice;
+      const interval = setInterval(() => {
+        computer_choices.forEach(ch => {
+          ch.classList.remove("choosing");
+        });
+  
+        let randomNumber = Math.floor(Math.random() * 3);
+        computer_choices[randomNumber].classList.add("choosing");
+        computerChoice = randomNumber;
+      }, 100);
+  
+      setTimeout(() => {
+        clearInterval(interval);
+        resolve(computer_choices[computerChoice].innerText);
+      }, 1500);
+    });
+  }
+  
 
-    if (randomNumber == 1) return "rock";
-    else if (randomNumber == 2) return "paper";
-    else return "scissors";
-
-}
-
-function getHumanChoice(){
-    let userInput = prompt("Enter your Choice: ").toLowerCase()
-    return userInput
-}
 
 function playRound(userChoice, computerChoice){
 
     if(userChoice == computerChoice) {
-        console.log("Draw");
-        return;
+        return "Draw";
     }
 
     if(userChoice == 'rock' && computerChoice == 'scissors'  || userChoice == 'paper' && computerChoice == "rock" || userChoice == 'scissors' && computerChoice == "paper"){
-        userScore++;
-        alert(`You win! ${userChoice} beats ${computerChoice}`);
+        return "User Won"
     }
 
     else {
-        computerScore++;
-        alert(`You lose! ${computerChoice} beats ${userChoice}`);
+        return "Computer Won"
     }
 
 
@@ -35,23 +40,31 @@ function playRound(userChoice, computerChoice){
 let userScore = 0;
 let computerScore = 0;
 
-function playgame(){
-
-    for(let i=0; i<5; i++){
+async function playgame(){
         
-        let userChoice = getHumanChoice();
-        let computerChoice = getComputerChoice();
-
-        alert(`Computer chose ${computerChoice}`)
+    let computerChoice = await getComputerChoice();
+    let userChoice = choice
+    
+    const winner = playRound(userChoice.toLowerCase(), computerChoice.toLowerCase());
         
-        playRound(userChoice, computerChoice);
-        
-    }
-
-    let winner = userScore > computerScore ? "You" : "Computer";
-    alert(`${winner} win!`);
+    document.querySelector("h1").innerText = winner;
 }
 
-playgame();
+const user_choices = document.querySelectorAll(".user.selection");
+const computer_choices = document.querySelectorAll(".comp.selection");
+let choice = ""
+
+user_choices.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        choice = e.target.innerText;
+        user_choices.forEach(ch => {
+            ch.classList.remove("choosing");
+        });
+        e.target.classList.add("choosing");        
+    })
+})
+
+document.querySelector(".play_button").addEventListener("click", playgame);
+
 
 
