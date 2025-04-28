@@ -1,0 +1,1 @@
+This rock paper scissors project was a part of The Odin Project JS Basics.
